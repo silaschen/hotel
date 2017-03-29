@@ -1,0 +1,31 @@
+<table class="table table-bordered">
+	<tbody>
+		<tr>
+			<td>昵称</td>
+			<td>{$info.nickname}</td>
+			<td>性别</td>
+			<td><if condition="$info.sex eq '1'">男<else/>女</if></td>
+			<td>国籍</td>
+			<td>{$info.country}</td>	
+		</tr>
+
+		<tr>
+			<td>省份</td>
+			<td>{$info.province}</td>
+			<td>城市</td>
+			<td>{$info.city}</td>
+			<td>关注状态</td>
+			<td><if condition="$info.subscribe eq '0'">未关注<else/>已关注</if></td>
+
+		</tr>
+		<tr>
+			<td>加入时间</td>
+			<td>{$info.addtime|date="Y-m-d H:i:s",###}</td>
+			<td>绑定车辆</td>
+			<td>{$info.car}</td>
+			<td>状态</td>
+			<td><if condition="$info.status eq '1'"><small class="badge bg-green">正常</small><else/><small class="badge bg-red">冻结</small></if></td>
+
+		</tr>
+	</tbody>
+</table>

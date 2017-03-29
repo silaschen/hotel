@@ -1,0 +1,57 @@
+<aside class="main-sidebar">
+  <section class="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="{:U('HotelAdm/index')}"><i class="fa fa-pie-chart"></i> <span>管理概况</span></a></li>
+
+      <li class="treeview">
+        <a href="#"><i class="fa fa-shopping-cart"></i> <span>订单管理</span> <i class="fa fa-angle-left pull-right"></i></a>
+        <ul class="treeview-menu">
+          <!-- <li><a href="{:U('ShopStore/module')}">预定列表</a></li> -->
+        </ul>
+      </li>
+
+        <li class="treeview">
+        <a href="#"><i class="fa fa-institution"></i> <span>房型管理</span> <i class="fa fa-angle-left pull-right"></i></a>
+        <ul class="treeview-menu">
+          <li><a href="{:U('HotelAdm/roomlist')}">房型列表</a></li>
+          <li><a href="{:U('HotelAdm/addroom')}">添加房型</a></li>
+
+          </ul>
+      </li>
+
+        <li class="treeview">
+        <a href="#"><i class="fa  fa-line-chart"></i> <span>财务管理</span> <i class="fa fa-angle-left pull-right"></i></a>
+        <ul class="treeview-menu">
+         <!--  <li><a href="{:U('ShopStore/module')}">房型列表</a></li> -->
+        </ul>
+      </li>
+     
+
+      <li class="treeview">
+        <a href="#"><i class="fa fa-cog"></i> <span>系统设置</span> <i class="fa fa-angle-left pull-right"></i></a>
+        <ul class="treeview-menu">
+          <li><a href="">绑定微信</a></li>
+          <li><a href="{:U('HotelAdm/profile')}">密码修改</a></li>
+        </ul>
+      </li>
+
+
+    </ul><!-- /.sidebar-menu -->
+  </section>
+  <!-- /.sidebar -->
+</aside>
+<if condition="$eq egt '0' OR $eq neq ''">
+<script type="text/javascript">
+if(!isNaN('{$eq}')){
+  $(".sidebar-menu > li").eq({$eq}).addClass('active');
+}else{
+  $(".sidebar-menu > li").each(function(){
+    var txt = $.trim($(this).children('a').text());
+    if(txt == '{$eq}'){
+      $(this).addClass('active');
+      return;
+    }
+  });
+}
+</script>
+</if>

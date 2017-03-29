@@ -1,0 +1,70 @@
+<extend name="Sys:base" />
+<block name="main">
+  <div class="box box-solid">
+    <div class="box-header with-border">
+      <h3 class="box-title">添加/编辑地区管理账号</h3><a href="{:U('HotelSys/AreaUserList')}" class='btn btn-default btn-xs pull-right'>返回列表</a>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+         <form method="POST" id="form">
+          <input name='id' class='hide' value='{$info.id}'>
+              <div class="row">
+            <div class="col-xs-4 col-md-6">
+              <select name='a1' class='form-control' onchange="GetArea('a1','a2',true);">
+              </select>
+            </div>
+            <div class="col-xs-4 col-md-6" style="padding:0 5px;">
+              <select name='a2' class='form-control' onchange="GetArea('a2','a3',true);"></select>
+            </div>
+         </div>
+   
+            <div class="form-group">
+              <label>管理员账号</label>
+              <input type="text" name="user" class="form-control" value="{$info.user}">
+            </div>
+             <div class="form-group">
+              <label>管理员密码</label>
+              <input type="password" name="pwd" class="form-control" placeholder="留空默认为原密码">
+            </div>
+         </form>
+    </div><!-- /.box-body -->
+    <div class="box-footer clearfix">
+      <button type="button" onclick="SaveAreaUser();" class="btn btn-success pull-right saveuser">确定</button>
+    </div>   
+  </div>
+<script type="text/javascript">
+function SaveAreaUser(){
+  if(vr('user') == ''){
+    alert('请填写管理员账号!');
+  }else if(vr('a1') == ''){
+    alert("请选择省份");
+  }else if(vr('a2') == ''){
+    alert("请选择城市");
+  }else{
+    $(".saveuser").addClass('disabled');
+    loading2("操作中...");
+    $.post(location.href,$("#form").serializeArray(),function(data){
+        alert(data.msg);
+        if (data.ret == 1) {
+          location.href = "{:U('HotelSys/AreaUserList')}";
+        }else{
+          loading2("",0);
+        }
+    },'JSON');
+  }
+}
+</script>
+<script type="text/javascript" src="Public/com/area.js"></script>
+<script type="text/javascript">
+$(function(){
+  AreaInit(true);//初始化地区
+  <if condition="$info['a1'] neq ''">
+    $("select[name='a1']").val({$info['a1']});
+  GetArea('a1','a2',true);
+  </if>
+  <if condition="$info['a2'] neq ''">
+  $("select[name='a2']").val({$info['a2']});
+  GetArea('a2','a3',true);
+  </if>
+});
+</script>
+</block>

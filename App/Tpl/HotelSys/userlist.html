@@ -1,0 +1,112 @@
+<extend name="Sys:base"/>
+<block name="main">
+  <div class="box box-solid">
+    <div class="box-header with-border">
+      <h3 class="box-title">用户列表  共:{$total}</h3>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <form method="GET" action="{:U('HotelSys/userlist')}" id='search' style="margin-bottom:15px;">
+      <div class="row">
+      <div class="col-md-4 col-xs-4">
+          <select name="sex" class="form-control">
+              <option value="3">全部</option>
+              <option value="1">男</option>
+              <option value="2">女</option>
+          </select>
+      </div>
+        <div class="col-xs-8 col-md-6">
+          <div class="input-group">
+            <input name="word" type='text' class='form-control' value="{:I('word')}" placeholder='帐号/ID/昵称/姓名/电话 关键词搜索..'>
+            <span class="input-group-addon" onclick="$('#search').submit();"><i class="fa fa-search"></i></span>
+            <if condition="$_GET['sex'] gt '0' OR $_GET['word'] neq ''">
+            <a title='清除条件' class="input-group-addon" href="{:U('HotelSys/userlist')}"><i class="fa fa-remove"></i></a>
+            </if>
+          </div>
+        </div>
+      </div>
+      </form>
+      <table class="table table-bordered">
+        <thead>
+          <th>ID</th>
+          <th>头像</th>
+          <th width='100'>昵称</th>
+          <th>性别</th>
+          <th>电话</th>
+          <th>累计订单</th>
+          <th>入住订单</th>
+          <th>注册时间</th>
+          <th>状态</th>
+          <th>操作</th>
+        </thead>
+        <tbody>
+      <volist name="list" id='vo'>
+        <tr>
+          <td>{$vo.id}</td>
+          <td><if condition="$vo.headimgurl neq ''"><img src='{$vo.headimgurl}' class='img-rounded' height='35'></if></td>
+          <td><if condition="$vo.shop gt '0'"><a href="{:U('SysShop/shoplist',array('id'=>$vo['shop']))}">{$vo.nickname}</a><else/>{$vo.nickname}</if></td>
+          <td><if condition="$vo.sex eq '1'"><small class="badge bg-blue">男</small><elseif condition="$vo.sex eq '2'"/><small class="badge bg-red">女</small><else/><small class="badge bg-gray">-</small></if></td>
+          <td><if condition="$vo.tel neq ''">{$vo.tel}</if></td>
+          <td><a class="badge bg-green" href="{:U()}">20</a></td>
+          <td><a href="" class="badge bg-green">5</a></td>
+          <td>{$vo.addtime|date='Y-m-d H:i:s',###}</td>
+          <td><if condition="$vo.status eq '1'"><span class="label label-success">正常</span><else/><span class="label label-danger">冻结</span></if></td>
+          <td>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+                  管理
+                  <span class="caret"></span>
+                  <span class="sr-only">+</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="javascript:loadpage('{:U('HotelSys/UserDetail',array('id'=>$vo['id']))}')">详情</a></li>
+                  <if condition="$vo.status eq '1'">
+                    <li><a href="javascript:SetStat({$vo.id},0)">禁用</a></li>
+                    <elseif condition="$vo.status eq '0'"/>
+                    <li><a href="javascript:SetStat({$vo.id},1)">启用</a></li>
+                    </if>
+                    <li class="divider"></li>
+                    <li><a href="javascript:SetStat({$vo.id},-1)">删除</a></li>
+                </ul>
+              </div>
+            </td>
+        </tr>
+      </volist>
+        </tbody>
+      </table>
+    </div><!-- /.box-body -->
+    <div class="box-footer clearfix">
+      <ul class="pagination pagination-sm no-margin pull-left">{$page}</ul>
+    </div>  
+  </div>
+<script type="text/javascript">
+function SetStat(id,t){
+  if(t == -1){
+    var r = confirm("确定删除该会员？");
+  }else if(t == 1){
+    var r = confirm("确定启用该会员？");
+  }else if(t == 0){
+    var r = confirm("确定禁用该会员？");
+  }
+  if(r == true){
+    loading2("操作中...");
+    $.post(location.href,{"id":id,"t":t},function(data){
+      alert(data.msg);
+      if(data.ret == 1){
+        location.reload()
+      }else{
+        loading2("",0);
+      }
+    },'JSON');
+  }
+ 
+}
+
+$(function(){
+
+  <if condition="$_GET['sex'] neq ''">
+      $("select[name='sex']").val({$_GET['sex']});
+  </if>
+})
+</script>
+
+</block>

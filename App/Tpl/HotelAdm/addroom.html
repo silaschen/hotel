@@ -1,0 +1,170 @@
+<extend name="base" />
+<block name="main">
+  <link rel="stylesheet" href="Public/com/jQuery-File-Upload-9.9.3/css/jquery.fileupload.css">
+  <div class="box box-solid">
+    <div class="box-header with-border">
+      <h3 class="box-title">添加/编辑酒店房型</h3><a href="{:U('HotelAdm/roomlist')}" class='btn btn-default btn-xs pull-right'>返回列表</a>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+         <form method="POST" id="form">
+          <input name='id' class='hide' value='{$info.id}'>
+            <div class='form-group'>
+              <label>房型名称：</label>
+              <input type='text' name='title' class='form-control' value='{$info.title}'>
+            </div>
+            <div class='form-group'>
+              <label>展示图片：</label>
+                <a href="javascript:$('#cover').val('');$('.showcover').html('');" onclick="return confirm('确定清除封面？');" class='pull-right'>清除封面</a> <br>
+                  <button type='button' class='btn btn-success btn-sm fileinput-button'><i class="glyphicon glyphicon-picture"></i> <small>推荐尺寸 400*300 点击上传</small><input  id="uploadcover" type="file" name="files" accept="image/*" ></button>
+                    <div id="progress" class="progress">
+                        <div class="progress-bar progress-bar-success"></div>
+                    </div>
+                    <div id="files" class="files">
+                    </div>
+                    <div class='showcover'>
+                    <if condition="$info.cover neq ''">
+                    <img src='{$info.cover}'>
+                    </if>
+                    </div>
+                <input class='hide' name='cover' id='cover' value='{$info.cover}'>
+            </div>
+           <div class='form-group'>
+              <label>简介：</label>
+                <textarea id="editor_id" name="intro" style="width:100%;min-height:260px;"></textarea>
+            </div>
+            <div class="form-group">
+              <label>门市价(元)</label>
+              <input type="number" name="price0" class="form-control" value="{$info.price0}">
+            </div>
+            <div class="form-group">
+              <label>普通会员价(元)</label>
+              <input type="number" name="price1" class="form-control" value="{$info.price1}">
+            </div>
+            <div class="form-group">
+              <label>VIP会员价(元)</label>
+              <input type="number" name="price2" class="form-control" value="{$info.price2}">
+            </div>
+        <div class='form-group'>
+            <label>库存：</label>
+            <input type='number' name='num' class='form-control' value='{$info.num}'>
+          </div>
+        <div class='form-group'>
+              <label>面积：</label>
+              <input type='text' name='size' class='form-control' value='{$info.size}'>
+            </div>
+          <div class='form-group'>
+            <label>床型：</label>
+            <input type='text' name='bedtype' class='form-control' value='{$info.bedtype}'>
+          </div>
+            <div class='form-group'>
+            <label>床宽：</label>
+            <input type='text' name='bedsize' class='form-control' value='{$info.bedsize}'>
+          </div>
+          <div class="form-group">
+              <label>窗户</label>
+              <select name="window" class="form-control">
+                <option value="1">有窗</option>
+                <option value="0">无窗</option>
+              </select>
+          </div>
+            <div class='form-group'>
+            <label>所在楼层：</label>
+            <input type='text' name='floor' class='form-control' value='{$info.floor}'>
+          </div>
+         <div class='form-group'>
+            <label>入住人数说明：</label>
+            <input type='text' name='people' class='form-control' value='{$info.people}'>
+          </div>
+          <div class='form-group'>
+            <label>上网方式说明：</label>
+            <input type='text' name='internet' class='form-control' value='{$info.internet}'>
+          </div>
+
+        <div class='form-group'>
+            <label>抽烟说明：</label>
+            <input type='text' name='smoke' class='form-control' value='{$info.smoke}'>
+          </div>
+        </form>
+    </div><!-- /.box-body -->
+    <div class="box-footer clearfix">
+      <button type="button" onclick="SaveRoom();" class="btn btn-success pull-right saveroom">确定</button>
+    </div>   
+  </div>
+<div class='hide temp'>{$info.intro}</div>
+<script charset="utf-8" src="Public/com/kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="Public/com/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+KindEditor.ready(function(K) {
+    window.editor = K.create('#editor_id',{
+      uploadJson:"{:U('Common/loadimg',array('body'=>1))}"
+    });
+    editor.html($('.temp').html());
+});
+function SaveRoom(){
+  $("#editor_id").val(editor.html());
+  if(vr('title') == ''){
+    alert('请填写房型名称!');
+  }else if(vr('price0') == ''){
+    alert("请填写门市价");
+  }else if(vr('price1') == ''){
+    alert("请填写普通会员价");
+  }else if(vr('price2') == ''){
+    alert("请填写管理员账号");
+  }else{
+    $(".saveroom").attr('disabled','true');
+    loading2("操作中...");
+    $.post(location.href,$("#form").serializeArray(),function(data){
+        alert(data.msg);
+        if (data.ret == 1) {
+          location.href = "{:U('HotelAdm/roomlist')}";
+        }else{
+          loading2("",0);
+        }
+    },'JSON');
+  }
+}
+</script>
+<script src="Public/com/jQuery-File-Upload-9.9.3/js/vendor/jquery.ui.widget.js"></script>
+<script src="Public/com/jQuery-File-Upload-9.9.3/js/load-image.all.min.js"></script>
+<script src="Public/com/jQuery-File-Upload-9.9.3/js/canvas-to-blob.min.js"></script>
+<script src="Public/com/jQuery-File-Upload-9.9.3/js/jquery.iframe-transport.js"></script>
+<script src="Public/com/jQuery-File-Upload-9.9.3/js/jquery.fileupload.js"></script>
+<script src="Public/com/jQuery-File-Upload-9.9.3/js/jquery.fileupload-process.js"></script>
+<script src="Public/com/jQuery-File-Upload-9.9.3/js/jquery.fileupload-image.js"></script>
+ <script type="text/javascript" src="Public/com/area.js"></script>
+<script type="text/javascript">
+$(function(){
+  <if condition="$info['window'] neq ''">
+   $("select[name='window']").val({$info.window});
+  </if>
+    $('#uploadcover').fileupload({
+        url: "{:U('Common/loadimg')}",
+        dataType: 'JSON',
+        acceptFileTypes: 'jpg,png,gif,jpeg,bmp',
+      maxFileSize: 8000000, // 800kb
+      disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
+        imageMaxWidth: 400, //自动裁剪保持该宽度
+        // imageMaxHeight: 300,
+        // imageCrop: true,
+        done: function (e, data) {
+          if(data.result.ret == 1){
+              $("input[name='cover']").val(data.result.file);
+              $(".showcover").html("<img src='"+data.result.file+"'>");
+            }else{
+              alert(data.result.msg);
+            }
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        }
+    }).prop('disabled', !$.support.fileInput)
+        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+});
+</script>
+
+</block>

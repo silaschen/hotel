@@ -1,0 +1,122 @@
+<extend name="Sys:base" />
+<block name="main">
+  <div class="box box-solid">
+    <div class="box-header with-border">
+      <h3 class="box-title">{$title}</h3>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+       <form method="GET" action="{:U('HotelSys/AreaUserList')}" id='search' style="margin-bottom:15px;">
+      <div class="row">
+           <div class="col-xs-4 col-md-3">
+                  <select name="status" class="form-control">
+                     <option value="2">全部</option>
+                     <option value="1">正常</option>
+                     <option value="3">禁用</option>
+                  </select>
+              </div>
+       <div class="col-xs-4 col-md-2">
+          <select name='a1' class='form-control' onchange="GetArea('a1','a2',true);">
+          </select>
+        </div>
+        <div class="col-xs-4 col-md-2">
+          <select name='a2' class='form-control' onchange="GetArea('a2','a3',true);"></select>
+        </div>
+        <div class="col-xs-8 col-md-3">
+          <div class="input-group">
+            <input name="word" type='text' class='form-control' value="{:I('word')}" placeholder='账号/关键词搜索..'>
+            <span class="input-group-addon" onclick="$('#search').submit();"><i class="fa fa-search"></i></span>
+            <if condition="$_GET['word'] neq '' OR $_GET['a1'] gt '0' OR $_GET['a2'] gt '0' OR $_GET['status'] neq '' ">
+            <a title='清除条件' class="input-group-addon" href="{:U('HotelSys/AreaUserList')}"><i class="fa fa-remove"></i></a>
+            </if>
+          </div>
+        </div>
+      </div>
+      </form>
+      <table class="table table-bordered">
+        <thead>
+          <th>ID</th>
+          <th>账号</th>
+          <th>省份</th>
+          <th>城市</th>
+          <th>添加时间</th>
+          <th>状态</th>
+          <th>操作</th>
+        </thead>
+        <tbody>
+      <volist name="list" id='vo'>
+        <tr>
+          <td>{$vo.id}</td>
+          <td>{$vo.user}</td>
+          <td>{$vo.a1}</td>
+          <td>{$vo.a2}</td>
+          <td>{$vo.addtime|date='Y-m-d H:i:s',###}</td>
+          <td><if condition="$vo.status eq '0'"><small class="badge bg-red">禁用</small><elseif condition="$vo.status eq '1'"/><small class="badge bg-green">正常</small></if></td>
+          <td>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+                管理
+                <span class="caret"></span>
+                <span class="sr-only">+</span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{:U('HotelSys/AddAreaUser',array('id'=>$vo['id']))}">修改</a></li>
+                <li class="divider"></li>
+                <if condition="$vo.status eq '1'">
+                <li><a href="javascript:setstat({$vo.id},0);">禁用</a></li><else/>
+                <li><a href="javascript:setstat({$vo.id},1)">启用</a></li>
+                </if>
+                <if condition="$vo.status neq '-1'">
+                <li><a href="javascript:setstat({$vo.id},-1);">删除</a></li>
+                </if>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </volist>
+        </tbody>
+      </table>
+    </div><!-- /.box-body -->
+    <div class="box-footer clearfix">
+      <ul class="pagination pagination-sm no-margin pull-left">{$page}</ul>
+      <a href="{:U('HotelSys/AddAreaUser')}" class="btn btn-success pull-right">添加账号</a>
+    </div> 
+  </div>
+<script src="Public/com/area.js"></script>
+<script type="text/javascript">
+function setstat(id,t){
+  if (t == 1) {
+    var w = confirm("是否启用该账号?");
+  }else if(t == 0){
+    var w = confirm("是否禁用该账号?");
+  }else{
+    w = confirm("是否删除该账号?");
+  }
+  if(w == true){
+      loading2("操作中");
+    $.post(location.href,{"id":id,"t":t},function(data){
+          alert(data.msg);
+          if (data.ret == 1) {
+            location.reload();
+          }else{
+            loading2("",0);
+          }
+    },'JSON');
+  }
+}
+$(function(){
+  AreaInit(true);
+<if condition="$_GET['a1'] gt '0'">
+$("select[name='a1']").val({:I('a1')});
+GetArea('a1','a2',true);
+</if>
+<if condition="$_GET['a2'] gt '0'">
+$("select[name='a2']").val({:I('a2')});
+GetArea('a2','a3',true);
+</if>
+<if condition="$_GET['status'] neq ''">
+$("select[name='status']").val({$_GET['status']});
+</if>
+
+});
+</script>
+</block>

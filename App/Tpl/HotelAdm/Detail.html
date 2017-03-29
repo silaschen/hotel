@@ -1,0 +1,86 @@
+<table class="table table-bordered">
+<tbody>
+	<tr>
+			<td>车牌</td>
+			<td>{$info.cphm}</td>
+			<td>车主</td>
+			<td>{$info.owner}</td>
+			<td>联系电话</td>
+			<td>{$info.tel}</td>
+
+	</tr>
+	<tr>
+		<td>身份证号</td>
+		<td>{$info.sfzh}</td>
+		<td>发动机号</td>
+		<td>{$info.engine_num}</td>
+		<td>车标</td>
+		<td>{$info.model}</td>
+
+	</tr>
+
+	<tr>
+		<td>注册日期</td>
+		<td>{$info.register_date}</td>
+		<td>原价</td>
+		<td>{$info.total}</td>
+		<td>最终优惠价</td>
+		<td>{$info.price}</td>
+
+	</tr>
+
+	<tr>
+		<td>交强险</td>
+		<td>{$info.fee1}</td>
+		<td>车船险</td>
+		<td>{$info.fee2}</td>
+		<td>三者险</td>
+		<td>{$info.fee3}</td>
+	</tr>
+
+	<tr>
+		<td>投保人</td>
+		<td>{$info.tbrname}</td>
+		<td>投保人电话</td>
+		<td>{$info.tbrtel}</td>
+		<td>投保人身份证</td>
+		<td>{$info.tbrsfzh}</td>
+
+
+	</tr>
+
+	<tr>
+		<td>配送方式</td>
+		<td><if condition="$info.ps eq '1'"><span class="label label-success">邮寄</span><else/><span class="label label-info">uu跑腿</span></if></td>
+		<td>完成时间</td>
+		<td>{$info.donetime|date="Y-m-d H:i:s",###}</td>
+		<td>订单号</td>
+		<td>{$info.orderid}</td>
+
+	</tr>
+
+	<tr>
+		<td>保单号</td>
+		<td>{$info.baodan}</td>
+		<td>保单图片</td>
+		<td><img src="{$info.bdpic}" height="35" width="35"></td>
+
+	</tr>
+
+	<tr>
+		<td>状态</td>
+		 <td>
+		 	<if condition="$info.status eq '0'"><small class="label label-default">取消</small><elseif condition="$info.status eq '6'"/><small class="label label-success">完成</small><elseif condition="$info.status eq '1'"/><small class="label label-info">待支付</small><elseif condition="$info.status eq '2'"/><small class="label label-warning">待确认</small><elseif condition="$info.status eq '3'"/><small class="label label-warning">待处理</small></if>
+		 </td>
+
+		 <td>下单时间</td>
+		 <td>{$info.addtime|date="Y-m-d H:i:s",###}</td>
+
+		 <td>地址</td>
+		 <td>{$info.adr}</td>
+	</tr>
+
+
+
+</tbody>
+</table>

@@ -1,0 +1,153 @@
+<extend name="base" />
+<block name="main">
+  <div class="box box-solid">
+    <div class="box-header with-border">
+      <h3 class="box-title">{$title}</h3>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <form method="GET" action="{:U('HotelAdm/roomlist')}" id='search' style="margin-bottom:15px;">
+      <div class="row">
+        <div class="col-xs-4 col-md-3">
+                  <select name="status" class="form-control">
+                     <option value="2">全部</option>
+                     <option value="1">正常</option>
+                     <option value="3">禁用</option>
+                  </select>
+
+              </div>
+
+        <div class="col-xs-8 col-md-3">
+          <div class="input-group">
+            <input name="word" type='text' class='form-control' value="{:I('word')}" placeholder='酒店名称/关键词搜索..'>
+            <span class="input-group-addon" onclick="$('#search').submit();"><i class="fa fa-search"></i></span>
+            <if condition="$_GET['word'] neq '' OR $_GET['id'] neq '' OR $_GET['status'] neq ''">
+            <a title='清除条件' class="input-group-addon" href="{:U('HotelAdm/roomlist')}"><i class="fa fa-remove"></i></a>
+            </if>
+          </div>
+        </div>
+      </div>
+      </form>
+      <table class="table table-bordered">
+        <thead>
+          <th>ID</th>
+          <th>封面</th>
+          <th>房型名称</th>
+          <th>市场价(元)</th>
+          <th>普通会员价(元)</th>
+          <th>VIP价(元)</th>
+          <th>库存</th>
+          <th>累计预订</th>
+          <th>添加时间</th>
+          <th>状态</th>
+          <th>操作</th>
+        </thead>
+        <tbody>
+      <volist name="list" id='vo'>
+        <tr>
+          <td>{$vo.id}</td>
+          <td><if condition="$vo.cover neq ''"><img onclick="show('{$vo['cover']}')" src="{$vo.cover}" class="img-responsive" height="40" width="40"></if></td>
+          <td>{$vo.title}</td>
+          <td>{$vo.price0}</td>
+          <td>{$vo.price1}</td>
+          <td>{$vo.price2}</td>
+          <td><span class="badge bg-blue">{$vo.num}</span></td>
+          <td>2</td>
+          <td>{$vo.addtime|date='Y-m-d H:i:s',###}</td>
+          <td><if condition="$vo.status eq '0'"><small class="badge bg-red">禁用</small><elseif condition="$vo.status eq '1'"/><small class="badge bg-green">正常</small></if></td>
+          <td>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+                管理
+                <span class="caret"></span>
+                <span class="sr-only">+</span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+               <!--  <li><a href="javascript:HotelInfo({$vo.id})">详情</a></li> -->
+                <li><a href="{:U('HotelAdm/addroom',array('id'=>$vo['id']))}">修改</a></li>
+                <li class="divider"></li>
+                <if condition="$vo.status eq '1'">
+                <li><a href="javascript:setstat({$vo.id},0);">禁用</a></li><else/>
+                <li><a href="javascript:setstat({$vo.id},1)">启用</a></li>
+                </if>
+                <if condition="$vo.status neq '-1'">
+                <li><a href="javascript:setstat({$vo.id},-1);">删除</a></li>
+                </if>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </volist>
+        </tbody>
+      </table>
+    </div><!-- /.box-body -->
+    <div class="box-footer clearfix">
+      <ul class="pagination pagination-sm no-margin pull-left">{$page}</ul>
+      <a href="{:U('HotelAdm/addroom')}" class="btn btn-success pull-right">添加房型</a>
+    </div> 
+  </div>
+<!--   图片 -->
+<div class="modal fade" id="cover" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <b>图片详情</b>
+      </div>
+      <div class="modal-body con-modal">
+       <img src="" class="shoppic">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="Public/com/area.js"></script>
+<script type="text/javascript">
+//查看店铺详情
+function HotelInfo(id){
+    loading2("loading...");
+  $.get(location.href,{"id":id},function(data){
+      if (data.ret == 1) {
+        var str = "";
+        str = "<table class='table table-bordered'><tbody><tr><td>店铺名称</td><td>"+data.shop.name+"</td><td>联系人</td><td>"+data.shop.contact+"</td></tr><tr><td>累计收入</td><td><span class='label label-info'>"+data.shop.total+"</span></td><td>联系电话</td><td>"+data.shop.tel+"</td></tr><tr><td>地址</td><td colspan='3'>"+data.shop.adr+"</td></tr></tbody></table>";
+        $(".con-modal").html(str);
+        loading2("",0);
+        $("#cover").modal('show');
+
+      }
+  },'JSON');
+} 
+function show(src){
+  if (src != '') {
+      $(".con-modal").html("<img class='img-responsive' src='"+src+"'>");
+    $("#cover").modal('show');
+  }
+}
+function setstat(id,t){
+  if (t == 1) {
+    var w = confirm("是否启用该房型?");
+  }else if(t == 0){
+    var w = confirm("是否禁用该房型?");
+  }else{
+    w = confirm("是否删除该房型?");
+  }
+  if(w == true){
+      loading2("操作中");
+    $.post(location.href,{"id":id,"t":t},function(data){
+          alert(data.msg);
+          if (data.ret == 1) {
+            location.reload();
+          }else{
+            loading2("",0);
+          }
+    },'JSON');
+  }
+}
+$(function(){
+ <if condition="$_GET['status'] neq ''">
+$("select[name='status']").val({$_GET['status']});
+</if>
+});
+</script>
+</block>
